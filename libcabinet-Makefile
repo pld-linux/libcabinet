@@ -1,0 +1,33 @@
+COBJS=adler32.lo compress.lo crc32.lo deflate.lo infblock.lo infcodes.lo inffast.lo inflate.lo inftrees.lo infutil.lo trees.lo uncompr.lo zutil.lo
+
+CXXOBJS=bstring.lo cfcreate.lo cfdblock.lo cffdrmgr.lo cffile.lo cffolder.lo cfheader.lo cfreader.lo cftypes.lo object.lo
+
+CXXPOBJ=listcab.lo
+LIBDIR=/usr/lib
+BINDIR=/usr/bin
+INCLUDEDIR=/usr/include/cabinet
+VERSION=0.30.0
+LIBRARY_NAME=cabinet
+PROGRAM_NAME=listcab
+
+CXXFLAGS=$(CFLAGS) -fno-rtti -fno-exceptions
+
+all:	lib$(LIBRARY_NAME).la $(PROGRAM_NAME)
+
+%.lo: %.c
+	libtool --mode=compile $(CC) $(CFLAGS) -c $*.c
+
+%.lo: %.cpp
+	libtool --mode=compile $(CXX) $(CXXFLAGS) -c $*.cpp
+
+lib$(LIBRARY_NAME).la: $(COBJS) $(CXXOBJS)
+	libtool --mode=link $(CXX) $(LDFLAGS) -o lib$(LIBRARY_NAME).la $(COBJS) $(CXXOBJS) -rpath $(LIBDIR) -release $(VERSION)
+
+$(PROGRAM_NAME): lib$(LIBRARY_NAME).la $(CXXPOBJ)
+	libtool --mode=link $(CXX) $(LDFLAGS) -o $(PROGRAM_NAME) $(CXXPOBJ) lib$(LIBRARY_NAME).la
+
+install:
+	install -d $(DESTDIR){$(LIBDIR),$(BINDIR),$(INCLUDEDIR)}
+	libtool --mode=install install lib$(LIBRARY_NAME).la $(DESTDIR)$(LIBDIR)
+	libtool --mode=install install $(PROGRAM_NAME) $(DESTDIR)$(BINDIR)
+	install dist-include/*.h $(DESTDIR)$(INCLUDEDIR)
