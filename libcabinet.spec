@@ -9,6 +9,9 @@ Group(de):	Libraries
 Group(es):	Bibliotecas
 Group(fr):	Librairies
 Group(pl):	Biblioteki
+Group(pt_BR):	Bibliotecas
+Group(ru):	Библиотеки
+Group(uk):	Б╕бл╕отеки
 Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 Patch0:		%{name}-endl.patch
