@@ -5,13 +5,6 @@ Version:	0.30
 Release:	2
 License:	non-commercial, see readme.txt
 Group:		Libraries
-Group(de):	Libraries
-Group(es):	Bibliotecas
-Group(fr):	Librairies
-Group(pl):	Biblioteki
-Group(pt_BR):	Bibliotecas
-Group(ru):	Библиотеки
-Group(uk):	Б╕бл╕отеки
 Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 Patch0:		%{name}-endl.patch
@@ -29,13 +22,6 @@ Biblioteka i narzЙdzia do obsЁugi plikСw Cabinet.
 Summary:	libcabinet development package
 Summary(pl):	libcabinet - czЙ╤Ф dla programistСw
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name} = %{version}
 
 %description devel
@@ -48,13 +34,6 @@ Pliki nagЁСwkowe do biblioteki libcabinet.
 Summary:	libcabinet static library
 Summary(pl):	Statyczna biblioteka libcabinet
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name}-devel = %{version}
 
 %description static
