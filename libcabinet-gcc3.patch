@@ -1,0 +1,211 @@
+--- libcabinet-0.30/bstring.h.orig	Sun Oct 24 13:29:53 1999
++++ libcabinet-0.30/bstring.h	Wed Oct  9 22:03:37 2002
+@@ -26,6 +26,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <fstream.h>
++#include <iostream.h>
+ #include "dos_comp.h"
+ 
+ //////////////////////////////////////////////////////////////////////////////
+--- libcabinet-0.30/bstring.cpp.orig	Sun Oct 24 13:29:53 1999
++++ libcabinet-0.30/bstring.cpp	Wed Oct  9 22:04:57 2002
+@@ -91,7 +91,7 @@
+ 
+ b_string b_string::operator + (const char* s)
+ {
+-	b_string temp = str;
++	b_string temp (str);
+ 	return temp += s;
+ }
+ 
+@@ -217,4 +217,4 @@
+ 
+ //*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+ 
+-#endif
+\ No newline at end of file
++#endif
+--- libcabinet-0.30/cftypes.h.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cftypes.h	Wed Oct  9 22:06:00 2002
+@@ -17,6 +17,7 @@
+ #define __CFTYPES_H__
+ 
+ #include <fstream.h>
++#include <iostream.h>
+ 
+ typedef unsigned char byte;
+ typedef unsigned short int word;
+--- libcabinet-0.30/cffile.h.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cffile.h	Wed Oct  9 22:06:18 2002
+@@ -161,4 +161,4 @@
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ 
+-#endif
+\ No newline at end of file
++#endif
+--- libcabinet-0.30/cfcreate.cpp.orig	Sun Oct 24 13:29:53 1999
++++ libcabinet-0.30/cfcreate.cpp	Wed Oct  9 22:52:51 2002
+@@ -27,6 +27,7 @@
+ #else
+ #include <time.h>
+ #include <unistd.h>
++#include <ext/stdio_filebuf.h>
+ #endif
+ 
+ ///////////////////////////////////////***************************************
+@@ -129,7 +130,7 @@
+ 		}
+ 	}
+ 
+-	if(fstat(in.rdbuf()->fd(), &statbuf) != 0) return FSTAT_FAILURE;
++	if(fstat(((__gnu_cxx::stdio_filebuf<char> *)(in.rdbuf()))->fd(), &statbuf) != 0) return FSTAT_FAILURE;
+ #ifndef unix
+ 	if(getftime(in.rdbuf()->fd(), &datetime) != 0) return GETTIME_FAILURE;
+ #endif
+@@ -194,7 +195,7 @@
+ 	unprocessed_data = NULL;				// Reset buffer holder
+ 	unprocessed_data_len = 0u;
+ 
+-	if(in.read(buf + bytesread, len - bytesread).bad())
++	if(in.read(((char*)buf) + bytesread, len - bytesread).bad())
+ 	{
+ 		delete[] buf;
+ 		buf = NULL;
+@@ -272,7 +273,7 @@
+ 		return WRITE_ERROR;
+ 	}
+ 
+-	tempfile->write(compdata, blockinfo.compressed_len);
++	tempfile->write((char*)compdata, blockinfo.compressed_len);
+ 	processed_bytes += sizeof(blockinfo) + blockinfo.compressed_len;
+ 	if(compdata != data) delete[] compdata;	// If buffer was allocated, free it
+ 	data_blocks++;						// Incriment block counter
+--- libcabinet-0.30/cfdblock.cpp.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cfdblock.cpp	Wed Oct  9 22:53:59 2002
+@@ -124,7 +124,7 @@
+ 		ra_size = cab_header.get_datablock_ra_size();
+ 		reserved_area = new byte[ra_size];
+ 
+-		if(in.read(reserved_area, ra_size).bad())
++		if(in.read((char*)reserved_area, ra_size).bad())
+ 		{
+ 			return (in.fail()) ? READ_ERROR : UNEXPECTED_EOF;
+ 		}
+@@ -154,7 +154,7 @@
+ 
+ 	if(ra_size)		 				// If reserve area, write it
+ 	{
+-		if(out.write(reserved_area, ra_size).fail()) return WRITE_ERROR;
++		if(out.write((char*)reserved_area, ra_size).fail()) return WRITE_ERROR;
+ 	}
+ 					 				// write data to stream
+ 	// if(out.write(compressed_data, compressed_size).bad()) return WRITE_ERROR;
+--- libcabinet-0.30/cffolder.h.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cffolder.h	Wed Oct  9 22:54:36 2002
+@@ -89,4 +89,4 @@
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ 
+-#endif
+\ No newline at end of file
++#endif
+--- libcabinet-0.30/cffolder.cpp.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cffolder.cpp	Wed Oct  9 22:55:22 2002
+@@ -70,7 +70,7 @@
+ 			ra_size = cab_header.get_folder_ra_size();
+ 			reserved_area = new byte[ra_size];
+ 
+-			if(in.read(reserved_area, ra_size).bad())
++			if(in.read((char*)reserved_area, ra_size).bad())
+ 			{
+ 				return (in.fail()) ? READ_ERROR : UNEXPECTED_EOF;
+ 			}
+@@ -90,7 +90,7 @@
+ 
+ 	if(ra_size)					// If reserved area present
+ 	{
+-		if(out.write(reserved_area, ra_size).fail()) { return WRITE_ERROR; }
++		if(out.write((char*)reserved_area, ra_size).fail()) { return WRITE_ERROR; }
+ 	}
+ 
+ 	return OK;
+--- libcabinet-0.30/cfheader.cpp.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cfheader.cpp	Wed Oct  9 22:56:20 2002
+@@ -127,7 +127,7 @@
+ 		{
+ 			reserved_area = new byte[cabinet_ra_size];
+ 
+-			if(in.read(reserved_area, cabinet_ra_size).bad())
++			if(in.read((char*)reserved_area, cabinet_ra_size).bad())
+ 			{
+ 				return (in.fail()) ? READ_ERROR : UNEXPECTED_EOF;
+ 			}
+@@ -172,7 +172,7 @@
+ 
+ 		if(cabinet_ra_size > 0)			// If has cabinet reserved area
+ 		{
+-			if(out.write(reserved_area, cabinet_ra_size).fail())
++			if(out.write((char*)reserved_area, cabinet_ra_size).fail())
+ 			{
+ 				return WRITE_ERROR;
+ 			}
+@@ -210,4 +210,4 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-#endif
+\ No newline at end of file
++#endif
+--- libcabinet-0.30/darray.h.orig	Sun Oct 24 13:29:53 1999
++++ libcabinet-0.30/darray.h	Wed Oct  9 22:56:48 2002
+@@ -155,4 +155,4 @@
+ 
+ ///////////////////////////////////////***************************************
+ 
+-#endif
+\ No newline at end of file
++#endif
+--- libcabinet-0.30/cftypes.cpp.orig	Sun Oct 24 08:13:29 1999
++++ libcabinet-0.30/cftypes.cpp	Wed Oct  9 22:57:53 2002
+@@ -140,13 +140,13 @@
+ {
+ 	while(len > MAXINT)
+ 	{
+-		if(in.read(buf, MAXINT).bad())
++		if(in.read((char*)buf, MAXINT).bad())
+ 			return (in.fail()) ? READ_ERROR : UNEXPECTED_EOF;
+ 		len -= (word) MAXINT;
+ 		buf += (word) MAXINT;
+ 	}
+ 
+-	return (in.read(buf, (int) len).bad())
++	return (in.read((char*)buf, (int) len).bad())
+ 		? (in.fail()) ? READ_ERROR : UNEXPECTED_EOF : OK;
+ }
+ 
+@@ -156,12 +156,12 @@
+ {
+ 	while(len > MAXINT)
+ 	{
+-		if(out.write(buf, MAXINT).fail()) return WRITE_ERROR;
++		if(out.write((char*)buf, MAXINT).fail()) return WRITE_ERROR;
+ 		len -= (word) MAXINT;
+ 		buf += (word) MAXINT;
+ 	}
+ 
+-	return (out.write(buf, (int) len).fail()) ? WRITE_ERROR : OK;
++	return (out.write((char*)buf, (int) len).fail()) ? WRITE_ERROR : OK;
+ }
+ 
+ //*****************************************************************************/
+--- libcabinet-0.30/object.cpp.orig	Sun Oct 24 13:29:53 1999
++++ libcabinet-0.30/object.cpp	Wed Oct  9 22:59:30 2002
+@@ -47,4 +47,4 @@
+ */
+ ///////////////////////////////////////***************************************
+ 
+-#endif
+\ No newline at end of file
++#endif

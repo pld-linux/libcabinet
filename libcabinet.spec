@@ -8,6 +8,7 @@ Group:		Libraries
 Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 Patch0:		%{name}-endl.patch
+Patch1:		%{name}-gcc3.patch
 URL:		http://Trill.cis.fordham.edu/~barbacha/cabinet_library/
 BuildRequires:	libstdc++-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -44,7 +45,8 @@ Statyczna wersja biblioteki libcabinet.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 install -m644 %{SOURCE1} Makefile
 
 %build
@@ -54,8 +56,6 @@ install -m644 %{SOURCE1} Makefile
 rm -rf $RPM_BUILD_ROOT
 %{__make} install DESTDIR="$RPM_BUILD_ROOT"
 
-gzip -9nf readme.txt
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -64,7 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc readme.txt
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/libcabinet-*.so
 
