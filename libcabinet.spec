@@ -2,7 +2,7 @@ Summary:	Cabinet File Library and Utilities
 Summary(pl):	Biblioteka i narzêdzia do obs³ugi plików Cabinet
 Name:		libcabinet
 Version:	0.30
-Release:	1
+Release:	2
 License:	non-commercial, see readme.txt
 Group:		Libraries
 Group(de):	Libraries
