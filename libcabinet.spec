@@ -53,6 +53,7 @@ install -m644 %{SOURCE1} Makefile
 %build
 %{__make} \
 	CC="%{__cc}" \
+	CXX="%{__cxx}" \
 	CFLAGS="%{rpmcflags} -D_GNU_SOURCE" \
 	LDFLAGS="%{rpmldflags}"
 
