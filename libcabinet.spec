@@ -6,6 +6,7 @@ Release:	2
 License:	non-commercial, see readme.txt
 Group:		Libraries
 Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{version}.tar.gz
+# Source0-md5:	f6b0683b4cf57ee3b9614135d0f8d0fe
 Source1:	%{name}-Makefile
 Patch0:		%{name}-endl.patch
 Patch1:		%{name}-gcc3.patch
