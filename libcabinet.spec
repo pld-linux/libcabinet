@@ -2,7 +2,7 @@ Summary:	Cabinet File Library and Utilities
 Summary(pl):	Biblioteka i narzêdzia do obs³ugi plików Cabinet
 Name:		libcabinet
 Version:	0.30
-Release:	2
+Release:	3
 License:	non-commercial, see readme.txt
 Group:		Libraries
 Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{version}.tar.gz
@@ -51,11 +51,16 @@ Statyczna wersja biblioteki libcabinet.
 install -m644 %{SOURCE1} Makefile
 
 %build
-%{__make} CC="%{__cc}" CFLAGS="%{rpmcflags} -D_GNU_SOURCE" LDFLAGS="%{rpmldflags}"
+%{__make} \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -D_GNU_SOURCE" \
+	LDFLAGS="%{rpmldflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} install DESTDIR="$RPM_BUILD_ROOT"
+
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
