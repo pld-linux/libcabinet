@@ -11,7 +11,8 @@ Source1:	%{name}-Makefile
 Patch0:		%{name}-endl.patch
 Patch1:		%{name}-gcc3.patch
 URL:		http://Trill.cis.fordham.edu/~barbacha/cabinet_library/
-BuildRequires:	libstdc++-devel
+# needed with gcc3 patch
+BuildRequires:	libstdc++-devel >= 5:3.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -55,13 +56,15 @@ install -m644 %{SOURCE1} Makefile
 	CC="%{__cc}" \
 	CXX="%{__cxx}" \
 	CFLAGS="%{rpmcflags} -D_GNU_SOURCE" \
-	LDFLAGS="%{rpmldflags}"
+	LDFLAGS="%{rpmldflags}" \
+	LIBDIR=%{_libdir}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT \
+	LIBDIR=%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
