@@ -133,7 +133,17 @@
  	return OK;
 --- libcabinet-0.30/cfheader.cpp.orig	Sun Oct 24 08:13:29 1999
 +++ libcabinet-0.30/cfheader.cpp	Wed Oct  9 22:56:20 2002
-@@ -127,7 +127,7 @@
+@@ -24,7 +24,8 @@
+ #include "cfheader.h"
+ 
+ #ifdef unix
+-#include <strstream.h>
++#include <strstream>
++using namespace std;
+ #else
+ #include <strstrea.h>
+ #endif
+@@ -127,7 +128,7 @@
  		{
  			reserved_area = new byte[cabinet_ra_size];
  
@@ -142,7 +152,7 @@
  			{
  				return (in.fail()) ? READ_ERROR : UNEXPECTED_EOF;
  			}
-@@ -172,7 +172,7 @@
+@@ -172,7 +173,7 @@
  
  		if(cabinet_ra_size > 0)			// If has cabinet reserved area
  		{
@@ -151,7 +161,7 @@
  			{
  				return WRITE_ERROR;
  			}
-@@ -210,4 +210,4 @@
+@@ -210,4 +211,4 @@
  
  ////////////////////////////////////////****************************************
  
