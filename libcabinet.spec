@@ -26,8 +26,8 @@ Biblioteka i narzêdzia do obs³ugi plików Cabinet.
 Summary:	libcabinet development package
 Summary(pl):	libcabinet - czê¶æ dla programistów
 Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
 Requires:	libstdc++-devel >= 5:3.2
-Requires:	%{name} = %{version}
 
 %description devel
 Header files for libcabinet.
@@ -39,7 +39,7 @@ Pliki nag³ówkowe do biblioteki libcabinet.
 Summary:	libcabinet static library
 Summary(pl):	Statyczna biblioteka libcabinet
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static version of libcabinet.
