@@ -13,6 +13,7 @@ Patch1:		%{name}-gcc3.patch
 URL:		http://Trill.cis.fordham.edu/~barbacha/cabinet_library/
 # needed with gcc3 patch
 BuildRequires:	libstdc++-devel >= 5:3.2
+BuildRequires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -25,6 +26,7 @@ Biblioteka i narzêdzia do obs³ugi plików Cabinet.
 Summary:	libcabinet development package
 Summary(pl):	libcabinet - czê¶æ dla programistów
 Group:		Development/Libraries
+Requires:	libstdc++-devel >= 5:3.2
 Requires:	%{name} = %{version}
 
 %description devel
