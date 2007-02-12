@@ -1,5 +1,5 @@
 Summary:	Cabinet File Library and Utilities
-Summary(pl):	Biblioteka i narzÍdzia do obs≥ugi plikÛw Cabinet
+Summary(pl.UTF-8):   Biblioteka i narzƒôdzia do obs≈Çugi plik√≥w Cabinet
 Name:		libcabinet
 Version:	0.30
 Release:	3
@@ -19,12 +19,12 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Cabinet File library and utilities.
 
-%description -l pl
-Biblioteka i narzÍdzia do obs≥ugi plikÛw Cabinet.
+%description -l pl.UTF-8
+Biblioteka i narzƒôdzia do obs≈Çugi plik√≥w Cabinet.
 
 %package devel
 Summary:	libcabinet development package
-Summary(pl):	libcabinet - czÍ∂Ê dla programistÛw
+Summary(pl.UTF-8):   libcabinet - czƒô≈õƒá dla programist√≥w
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libstdc++-devel >= 5:3.2
@@ -32,19 +32,19 @@ Requires:	libstdc++-devel >= 5:3.2
 %description devel
 Header files for libcabinet.
 
-%description devel -l pl
-Pliki nag≥Ûwkowe do biblioteki libcabinet.
+%description devel -l pl.UTF-8
+Pliki nag≈Ç√≥wkowe do biblioteki libcabinet.
 
 %package static
 Summary:	libcabinet static library
-Summary(pl):	Statyczna biblioteka libcabinet
+Summary(pl.UTF-8):   Statyczna biblioteka libcabinet
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static version of libcabinet.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Statyczna wersja biblioteki libcabinet.
 
 %prep
