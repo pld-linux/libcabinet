@@ -1,5 +1,5 @@
 Summary:	Cabinet File Library and Utilities
-Summary(pl.UTF-8):   Biblioteka i narzędzia do obsługi plików Cabinet
+Summary(pl.UTF-8):	Biblioteka i narzędzia do obsługi plików Cabinet
 Name:		libcabinet
 Version:	0.30
 Release:	3
@@ -24,7 +24,7 @@ Biblioteka i narzędzia do obsługi plików Cabinet.
 
 %package devel
 Summary:	libcabinet development package
-Summary(pl.UTF-8):   libcabinet - część dla programistów
+Summary(pl.UTF-8):	libcabinet - część dla programistów
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libstdc++-devel >= 5:3.2
@@ -37,7 +37,7 @@ Pliki nagłówkowe do biblioteki libcabinet.
 
 %package static
 Summary:	libcabinet static library
-Summary(pl.UTF-8):   Statyczna biblioteka libcabinet
+Summary(pl.UTF-8):	Statyczna biblioteka libcabinet
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
