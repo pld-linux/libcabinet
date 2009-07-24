@@ -1,0 +1,1033 @@
+diff -ur libcabinet-0.30.org/bstring.cpp libcabinet-0.30/bstring.cpp
+--- libcabinet-0.30.org/bstring.cpp	2009-07-24 15:41:19.273903021 +0200
++++ libcabinet-0.30/bstring.cpp	2009-07-24 15:39:28.878904770 +0200
+@@ -15,7 +15,7 @@
+ 
+ #include "bstring.h"
+ #include <string.h>
+-#include <fstream.h>
++#include <fstream>
+ 
+ ///////////////////////////////////////***************************************
+ 
+@@ -207,7 +207,7 @@
+ 
+ //*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+ 
+-istream& operator >> (istream& input, b_string& str)
++std::istream& operator >> (std::istream& input, b_string& str)
+ {
+ 	char buffer[128];		// Local buffer large enougth for 1 dos line
+ 	input >> buffer;		// Get info from input stream
+diff -ur libcabinet-0.30.org/bstring.h libcabinet-0.30/bstring.h
+--- libcabinet-0.30.org/bstring.h	2009-07-24 15:41:19.269876185 +0200
++++ libcabinet-0.30/bstring.h	2009-07-24 15:38:03.138876541 +0200
+@@ -21,12 +21,12 @@
+ #ifndef __BSTRING_HPP__
+ #define __BSTRING_HPP__
+ 
+-#include <alloc.h>
++//#include <alloc.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h>
+-#include <fstream.h>
+-#include <iostream.h>
++#include <fstream>
++#include <iostream>
+ #include "dos_comp.h"
+ 
+ //////////////////////////////////////////////////////////////////////////////
+@@ -127,12 +127,12 @@
+ 
+ //*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+ 
+-inline ostream& operator << (ostream& output, b_string& str)
++inline std::ostream& operator << (std::ostream& output, b_string& str)
+ {
+ 	return output << (const char *) str;
+ }
+ 
+-istream& operator >> (istream& input, b_string& str);
++std::istream& operator >> (std::istream& input, b_string& str);
+ 
+ //*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+ 
+diff -ur libcabinet-0.30.org/cfcreate.cpp libcabinet-0.30/cfcreate.cpp
+--- libcabinet-0.30.org/cfcreate.cpp	2009-07-24 15:41:19.273903021 +0200
++++ libcabinet-0.30/cfcreate.cpp	2009-07-24 15:39:28.878904770 +0200
+@@ -10,7 +10,7 @@
+ // Changes: Changed cfc_folderinfo::open function to return an error value.
+ //          This is better than just dying if the compression failed to
+ //          initiate.  The cabinet_creator::new_folder function was updated to
+-//          take this error code into account.  Removed cerr reference.
++//          take this error code into account.  Removed std::cerr reference.
+ 
+ #ifndef __CFCREATE_CPP__
+ #define __CFCREATE_CPP__
+@@ -32,7 +32,7 @@
+ 
+ ///////////////////////////////////////***************************************
+ 
+-int cfc_fileinfo::write_entry(ostream& out)
++int cfc_fileinfo::write_entry(std::ostream& out)
+ {
+ 	struct file_fixed_header header;
+ 
+@@ -50,7 +50,7 @@
+ ///////////////////////////////////////***************************************
+ ///////////////////////////////////////***************************************
+ 
+-int cfc_folderinfo::write_entry(ostream& out, dword hsize)
++int cfc_folderinfo::write_entry(std::ostream& out, dword hsize)
+ {
+ 	struct folder_fixed_header header;
+ 
+@@ -63,7 +63,7 @@
+ 
+ ///////////////////////////////////////***************************************
+ 
+-int cfc_folderinfo::open(ostream& temp, dword soffset, word comptype, word fno, byte resrv_len, byte* resrv)
++int cfc_folderinfo::open(std::ostream& temp, dword soffset, word comptype, word fno, byte resrv_len, byte* resrv)
+ {
+ 	int r = OK;
+ 
+@@ -112,7 +112,7 @@
+ #else
+ 	struct tm* ts = NULL;
+ #endif
+-	ifstream in(fname, ios::in | ios::binary);
++	std::ifstream in(fname, std::ios::in | std::ios::binary);
+ 
+ 	if(!in) return FILE_OPEN_FAILURE;
+ 
+@@ -179,7 +179,7 @@
+ // If enougth data was read to fill a block it will be returned through buf
+ // If operation fails, buf and/or buf_len return invalid data
+ 
+-int cfc_folderinfo::read_block(istream& in, byte* &buf, int& bytesread)
++int cfc_folderinfo::read_block(std::istream& in, byte* &buf, int& bytesread)
+ {
+ 	if(in.eof())						// If in is at the EOF
+ 	{
+@@ -260,7 +260,7 @@
+ 
+ 	if((retval = compress_block(compdata, blockinfo.compressed_len, (byte *) data, datalen)) != OK) return retval;
+ 
+-	// cout << compdata[0] << compdata[1] << endl;
++	// std::cout << compdata[0] << compdata[1] << std::endl;
+ 
+ 	blockinfo.csum = CSUMCompute((byte *) &(blockinfo.compressed_len),
+ 						    sizeof(blockinfo.compressed_len)
+@@ -418,7 +418,7 @@
+ 
+ 	tmpnam(buf);
+ 	temp_file_name = buf;
+-	temp.open(buf, ios::in | ios::out | ios::binary | ios::trunc);
++	temp.open(buf, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+ 
+ 	if(!temp)							// If open operation failed
+ 	{
+@@ -467,7 +467,7 @@
+ int cabinet_creator::close(const char* fname)
+ {
+ 	int retval = 0;
+-	ofstream out(fname, ios::out | ios::binary | ios::trunc);
++	std::ofstream out(fname, std::ios::out | std::ios::binary | std::ios::trunc);
+ 
+ 	if(!out)
+ 	{
+@@ -481,7 +481,7 @@
+ 
+ ///////////////////////////////////////***************************************
+ 
+-int cabinet_creator::close(ostream& out)
++int cabinet_creator::close(std::ostream& out)
+ {
+ 	int retval = 0;
+ 	unsigned long header_size = sizeof(struct cabinet_fixed_header);
+@@ -516,7 +516,7 @@
+ 		delete fileq.Get();			// Delete folder entry
+ 	}
+ 
+-	if(temp.seekg(0, ios::beg).fail()) return SEEK_ERROR;
++	if(temp.seekg(0, std::ios::beg).fail()) return SEEK_ERROR;
+ 	if((out << temp.rdbuf()).fail()) return WRITE_ERROR;
+ 	temp.close();
+ 
+diff -ur libcabinet-0.30.org/cfcreate.h libcabinet-0.30/cfcreate.h
+--- libcabinet-0.30.org/cfcreate.h	1999-10-24 13:29:53.000000000 +0200
++++ libcabinet-0.30/cfcreate.h	2009-07-24 15:38:03.142876839 +0200
+@@ -142,7 +142,7 @@
+ 		{
+ 			return sizeof(struct file_fixed_header) + strlen(name) + 1u;
+ 		}
+-		int write_entry(ostream& out);
++		int write_entry(std::ostream& out);
+ };
+ 
+ //////////////////////////////////////////////////////////////////////////////
+@@ -174,7 +174,7 @@
+ 		word folderno;			// This folder's number
+ 
+ 		QueueOf<cfc_fileinfo> fileq;	// Queue containing all added files
+-		ostream* tempfile;
++		std::ostream* tempfile;
+ 		byte* unprocessed_data;	// Unprocessed data from last add_file(...) operation
+ 		word unprocessed_data_len;	// Length of unprocessed data
+ 		unsigned long nbytes; 		// Number of bytes currently in folder
+@@ -209,18 +209,18 @@
+ 		}
+ 	protected:
+ 		int process_block(const byte* data, word datalen);
+-		int read_block(istream& in, byte* &buf, int& bytesread);
++		int read_block(std::istream& in, byte* &buf, int& bytesread);
+ 		int compress_block(byte* &dest, word &destlen, byte* src, word srclen);
+-		CHECKSUM cfc_folderinfo::CSUMCompute(byte* pb, unsigned cb, CHECKSUM seed);
++		CHECKSUM CSUMCompute(byte* pb, unsigned cb, CHECKSUM seed);
+ 	public:
+ 		cfc_folderinfo() { clear_variables(); }
+ 		virtual ~cfc_folderinfo() { free_buffers(); }
+ 		void reset() { free_buffers(); clear_variables(); }
+-		int open(ostream& temp, dword soffset, word comptype, word fno)
++		int open(std::ostream& temp, dword soffset, word comptype, word fno)
+ 		{
+ 			return open(temp, soffset, comptype, fno, 0, 0);
+ 		}
+-		int open(ostream& temp, dword soffset, word comptype, word fno, byte resrv_len, byte* resrv);
++		int open(std::ostream& temp, dword soffset, word comptype, word fno, byte resrv_len, byte* resrv);
+ 		int add_file(const char* fname);
+ 		int freeze(void);
+ 		void close(QueueOf<cfc_fileinfo> &cabfileq, unsigned long& size, unsigned long& hsize);
+@@ -231,7 +231,7 @@
+ 		unsigned long get_size() { return nbytes; }
+ 		const byte* get_reserved_area() { return (const byte *) reserved_area; }
+ 		unsigned long entry_size() { return sizeof(struct folder_fixed_header); }
+-		int write_entry(ostream& out, dword hsize);
++		int write_entry(std::ostream& out, dword hsize);
+ 		unsigned long get_processed_bytes() { return processed_bytes; }
+ };
+ 
+@@ -266,7 +266,7 @@
+ 			//byte* szDiskNext;		// (optional) name of next disk
+ 		};
+ 	protected:
+-		fstream temp;
++		std::fstream temp;
+ 		b_string temp_file_name;
+ 		QueueOf<cfc_folderinfo> folderq;
+ 	protected:
+@@ -291,7 +291,7 @@
+ 		int new_folder(word comptype);
+ 		int add_file(const char* fname);
+ 		int close(const char* fname);
+-		int close(ostream& out);
++		int close(std::ostream& out);
+ };
+ 
+ //////////////////////////////////////////////////////////////////////////////
+diff -ur libcabinet-0.30.org/cfdblock.cpp libcabinet-0.30/cfdblock.cpp
+--- libcabinet-0.30.org/cfdblock.cpp	2009-07-24 15:41:19.273903021 +0200
++++ libcabinet-0.30/cfdblock.cpp	2009-07-24 15:39:28.882903670 +0200
+@@ -17,14 +17,14 @@
+ #ifndef __CFDBLOCK_CPP__
+ #define __CFDBLOCK_CPP__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "cftypes.h"
+ #include "cfdblock.h"
+ #include "cfheader.h"
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_datablock_fixed_header::read(istream& in)
++Error cabinet_datablock_fixed_header::read(std::istream& in)
+ {
+ 	return (in.read((char *) this, sizeof(*this)).bad())
+ 			? ((in.fail()) ? READ_ERROR : UNEXPECTED_EOF) : OK;
+@@ -32,7 +32,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_datablock_fixed_header::write(ostream& out)
++Error cabinet_datablock_fixed_header::write(std::ostream& out)
+ {
+ 	return (out.write((char *) this, sizeof(*this)).fail()) ? WRITE_ERROR : OK;
+ }
+@@ -112,7 +112,7 @@
+ 
+ ///////////////////////////////////////***************************************
+ 
+-int cabinet_datablock::read(istream& in, cabinet_header& cab_header)
++int cabinet_datablock::read(std::istream& in, cabinet_header& cab_header)
+ {
+ 	int err = OK;
+ 
+@@ -144,7 +144,7 @@
+ 
+ // Warning: as a safety measure this function computes and sets the checksum
+ 
+-int cabinet_datablock::write(ostream& out)
++int cabinet_datablock::write(std::ostream& out)
+ {
+ 	Error err = OK;
+ 
+diff -ur libcabinet-0.30.org/cfdblock.h libcabinet-0.30/cfdblock.h
+--- libcabinet-0.30.org/cfdblock.h	1999-10-24 08:13:29.000000000 +0200
++++ libcabinet-0.30/cfdblock.h	2009-07-24 15:38:03.142876839 +0200
+@@ -14,7 +14,7 @@
+ #ifndef __CFDBLOCK_H__
+ #define __CFDBLOCK_H__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "cftypes.h"
+ #include "cfheader.h"
+ 
+@@ -35,8 +35,8 @@
+ 		~cabinet_datablock_fixed_header() {}
+ 
+ 		void clear() { clear_variables(); }
+-		Error read(istream& in);
+-		Error write(ostream& out);
++		Error read(std::istream& in);
++		Error write(std::ostream& out);
+ 
+ 		dword get_checksum() { return csum; }
+ 		void set_checksum(dword c) { csum = c; }
+@@ -77,8 +77,8 @@
+ 			clear_variables();
+ 			cabinet_datablock_fixed_header::clear();
+ 		}
+-		int read(istream& in, cabinet_header& cab_header);
+-		int write(ostream& out);
++		int read(std::istream& in, cabinet_header& cab_header);
++		int write(std::ostream& out);
+ 
+ 		int checksum_ok(void);
+ 		int checksum_not_ok(void);
+diff -ur libcabinet-0.30.org/cffdrmgr.cpp libcabinet-0.30/cffdrmgr.cpp
+--- libcabinet-0.30.org/cffdrmgr.cpp	1999-10-24 13:29:53.000000000 +0200
++++ libcabinet-0.30/cffdrmgr.cpp	2009-07-24 15:39:28.882903670 +0200
+@@ -12,7 +12,7 @@
+ #ifndef __CFFDRMGR_CPP__
+ #define __CFFDRMGR_CPP__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "zlib.h"
+ #include "cftypes.h"
+ #include "cfdblock.h"
+@@ -27,7 +27,7 @@
+ // associated datablocks for this folder.  Decompression is handled on the fly
+ // by this function.
+ 
+-int cabinet_folder_manager::extract_data(ostream& out, istream& in,
++int cabinet_folder_manager::extract_data(std::ostream& out, std::istream& in,
+ 								 dword start, dword nbytes,
+ 								 cabinet_header& cab_header)
+ {
+@@ -83,7 +83,7 @@
+ 
+ // This function write data from a datablock to out.
+ 
+-int cabinet_folder_manager::write_data(ostream& out, cabinet_datablock& block,
++int cabinet_folder_manager::write_data(std::ostream& out, cabinet_datablock& block,
+ 							    word offset, word nbytes,
+ 							    COMPRESSION_STATE_FLAG state)
+ {
+@@ -134,7 +134,7 @@
+ 		byte* buf = new byte[block.get_uncompressed_size()];
+ 
+ 		stream->next_in = (byte *) block.get_compressed_data();
+-		// cout << (stream->next_in)[0] << (stream->next_in)[1] << endl;
++		// std::cout << (stream->next_in)[0] << (stream->next_in)[1] << std::endl;
+ 		stream->avail_in = block.get_compressed_size();
+ 		stream->next_out = buf;
+ 		stream->avail_out = block.get_uncompressed_size();
+diff -ur libcabinet-0.30.org/cffdrmgr.h libcabinet-0.30/cffdrmgr.h
+--- libcabinet-0.30.org/cffdrmgr.h	1999-10-24 08:13:29.000000000 +0200
++++ libcabinet-0.30/cffdrmgr.h	2009-07-24 15:38:03.142876839 +0200
+@@ -9,7 +9,7 @@
+ #ifndef __CFFDRMGR_H__
+ #define __CFFDRMGR_H__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "zlib.h"
+ #include "cftypes.h"
+ #include "cfdblock.h"
+@@ -33,9 +33,9 @@
+ 	public:
+ 		cabinet_folder_manager() { stream = NULL; }
+ 		~cabinet_folder_manager() { if(stream != NULL) delete stream; }
+-		int extract_data(ostream& out, istream& in, dword start,
++		int extract_data(std::ostream& out, std::istream& in, dword start,
+ 					  dword nbytes, cabinet_header& cab_header);
+-		int write_data(ostream& out, cabinet_datablock& block, word offset,
++		int write_data(std::ostream& out, cabinet_datablock& block, word offset,
+ 					word nbytes, COMPRESSION_STATE_FLAG state);
+ };
+ 
+diff -ur libcabinet-0.30.org/cffile.cpp libcabinet-0.30/cffile.cpp
+--- libcabinet-0.30.org/cffile.cpp	1999-10-24 08:13:29.000000000 +0200
++++ libcabinet-0.30/cffile.cpp	2009-07-24 15:39:28.882903670 +0200
+@@ -17,14 +17,14 @@
+ #ifndef __CFFILE_CPP__
+ #define __CFFILE_CPP__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "cffile.h"
+ #include "cftypes.h"
+ #include "cfheader.h"
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_file_fixed_header::read(istream& in)
++Error cabinet_file_fixed_header::read(std::istream& in)
+ {
+ 	return (in.read((char *) this, sizeof(*this)).bad())
+ 			? ((in.fail()) ? READ_ERROR : UNEXPECTED_EOF) : OK;
+@@ -32,14 +32,14 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_file_fixed_header::write(ostream& out)
++Error cabinet_file_fixed_header::write(std::ostream& out)
+ {
+ 	return (out.write((char *) this, sizeof(*this)).fail()) ? WRITE_ERROR : OK;
+ }
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_file_header::read(istream& in)
++Error cabinet_file_header::read(std::istream& in)
+ {
+ 	Error err = OK;
+ 
+@@ -50,7 +50,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_file_header::write(ostream& out)
++Error cabinet_file_header::write(std::ostream& out)
+ {
+ 	Error err = OK;
+ 
+diff -ur libcabinet-0.30.org/cffile.h libcabinet-0.30/cffile.h
+--- libcabinet-0.30.org/cffile.h	2009-07-24 15:41:19.273903021 +0200
++++ libcabinet-0.30/cffile.h	2009-07-24 15:38:03.146876438 +0200
+@@ -15,7 +15,7 @@
+ #define __CFFILE_H__
+ 
+ #include <string.h>
+-#include <fstream.h>
++#include <fstream>
+ #include "bstring.h"
+ #include "cftypes.h"
+ 
+@@ -67,8 +67,8 @@
+ 		~cabinet_file_fixed_header() {}
+ 
+ 		void clear() { clear_variables(); }
+-		Error read(istream& in);
+-		Error write(ostream& out);
++		Error read(std::istream& in);
++		Error write(std::ostream& out);
+ 
+ 		dword get_size() { return size; }
+ 		void set_size(dword len) { size = len; }
+@@ -151,8 +151,8 @@
+ 			clear_local_variables();
+ 			cabinet_file_fixed_header::clear();
+ 		}
+-		Error read(istream& in);
+-		Error write(ostream& out);
++		Error read(std::istream& in);
++		Error write(std::ostream& out);
+ 
+ 		const char* get_name() { return (const char *) name; }
+ 		void set_name(const char* n) { name = n; }
+diff -ur libcabinet-0.30.org/cffolder.cpp libcabinet-0.30/cffolder.cpp
+--- libcabinet-0.30.org/cffolder.cpp	2009-07-24 15:41:19.277901711 +0200
++++ libcabinet-0.30/cffolder.cpp	2009-07-24 15:39:28.886876450 +0200
+@@ -17,14 +17,14 @@
+ #ifndef __CFFOLDER_CPP__
+ #define __CFFOLDER_CPP__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "cftypes.h"
+ #include "cfheader.h"
+ #include "cffolder.h"
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_folder_fixed_header::read(istream& in)
++Error cabinet_folder_fixed_header::read(std::istream& in)
+ {
+ 	return (in.read((char *) this, sizeof(*this)).bad())
+ 			? ((in.fail()) ? READ_ERROR : UNEXPECTED_EOF) : OK;
+@@ -32,7 +32,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_folder_fixed_header::write(ostream& out)
++Error cabinet_folder_fixed_header::write(std::ostream& out)
+ {
+ 	return (out.write((char *) this, sizeof(*this)).fail()) ? WRITE_ERROR : OK;
+ }
+@@ -56,7 +56,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_folder_header::read(istream& in, cabinet_header& cab_header)
++Error cabinet_folder_header::read(std::istream& in, cabinet_header& cab_header)
+ {
+ 	Error err = OK;
+ 
+@@ -82,7 +82,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_folder_header::write(ostream& out)
++Error cabinet_folder_header::write(std::ostream& out)
+ {
+ 	Error err = OK;
+ 
+diff -ur libcabinet-0.30.org/cffolder.h libcabinet-0.30/cffolder.h
+--- libcabinet-0.30.org/cffolder.h	2009-07-24 15:41:19.273903021 +0200
++++ libcabinet-0.30/cffolder.h	2009-07-24 15:38:03.146876438 +0200
+@@ -15,7 +15,7 @@
+ #define __CFFOLDER_H__
+ 
+ #include <string.h>
+-#include <fstream.h>
++#include <fstream>
+ #include "cftypes.h"
+ #include "cfheader.h"
+ 
+@@ -40,8 +40,8 @@
+ 		~cabinet_folder_fixed_header() {}
+ 
+ 		void clear() { clear_variables(); }
+-		Error read(istream& in);
+-		Error write(ostream& out);
++		Error read(std::istream& in);
++		Error write(std::ostream& out);
+ 
+ 		dword get_data_offset() { return data_offset; }
+ 		void set_data_offset(dword offset) { data_offset = offset; }
+@@ -77,8 +77,8 @@
+ 			cabinet_folder_fixed_header::clear();
+ 		}
+ 		void init(cabinet_header& cab_header);
+-		Error read(istream& in, cabinet_header& cab_header);
+-		Error write(ostream& out);
++		Error read(std::istream& in, cabinet_header& cab_header);
++		Error write(std::ostream& out);
+ 
+ 		const byte* get_reserved_area() { return reserved_area; }
+ 		void set_reserved_area(const byte* newra)
+diff -ur libcabinet-0.30.org/cfheader.cpp libcabinet-0.30/cfheader.cpp
+--- libcabinet-0.30.org/cfheader.cpp	2009-07-24 15:41:19.277901711 +0200
++++ libcabinet-0.30/cfheader.cpp	2009-07-24 15:39:28.886876450 +0200
+@@ -18,7 +18,7 @@
+ #define __CFHEADER_CPP__
+ 
+ #include <string.h>
+-#include <fstream.h>
++#include <fstream>
+ #include "bstring.h"
+ #include "cftypes.h"
+ #include "cfheader.h"
+@@ -48,7 +48,7 @@
+ 
+ // Read the cabinet fixed header information from a input stream
+ 
+-Error cabinet_fixed_header::read(istream& in)
++Error cabinet_fixed_header::read(std::istream& in)
+ {
+ 	return  (in.read((char *) this, sizeof(*this)).bad())
+ 			? ((in.fail()) ? READ_ERROR : UNEXPECTED_EOF) : OK;
+@@ -58,7 +58,7 @@
+ 
+ // Write the cabinet fixed header information to a output stream
+ 
+-Error cabinet_fixed_header::write(ostream& out)
++Error cabinet_fixed_header::write(std::ostream& out)
+ {
+ 	return (out.write((char *) this, sizeof(*this)).fail()) ? WRITE_ERROR : OK;
+ }
+@@ -100,7 +100,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_header::read(istream& in)
++Error cabinet_header::read(std::istream& in)
+ {
+ 	Error err = OK;
+ 	struct
+@@ -152,7 +152,7 @@
+ 
+ ////////////////////////////////////////****************************************
+ 
+-Error cabinet_header::write(ostream& out)
++Error cabinet_header::write(std::ostream& out)
+ {
+ 	Error err = OK;
+ 	struct
+diff -ur libcabinet-0.30.org/cfheader.h libcabinet-0.30/cfheader.h
+--- libcabinet-0.30.org/cfheader.h	1999-10-24 08:13:29.000000000 +0200
++++ libcabinet-0.30/cfheader.h	2009-07-24 15:38:03.146876438 +0200
+@@ -15,7 +15,7 @@
+ #define __CFHEADER_H__
+ 
+ #include <string.h>
+-#include <fstream.h>
++#include <fstream>
+ #include "cftypes.h"
+ #include "bstring.h"
+ 
+@@ -54,8 +54,8 @@
+ 
+ 		void clear() { clear_variables(); }
+ 		void init(void);
+-		Error read(istream& in);
+-		Error write(ostream& out);
++		Error read(std::istream& in);
++		Error write(std::ostream& out);
+ 
+ 		byte* get_signature() { return signature; }
+ 		void set_signature(const byte* sig) { memcpy(signature, sig, 4); }
+@@ -147,7 +147,7 @@
+ 			clear_variables();
+ 		}
+ 	public:
+-		static Error read_string(b_string& str, istream& in);
++		static Error read_string(b_string& str, std::istream& in);
+ 	public:
+ 		cabinet_header() { clear_variables(); }
+ 		~cabinet_header() { free_buffers(); }
+@@ -155,8 +155,8 @@
+ 		void clear()
+ 			{ clear_class_variables(); cabinet_fixed_header::clear(); }
+ 		void init() { clear(); cabinet_fixed_header::init(); }
+-		Error read(istream& in);
+-		Error write(ostream& out);
++		Error read(std::istream& in);
++		Error write(std::ostream& out);
+ 
+ 		word get_cabinet_ra_size() { return cabinet_ra_size; }
+ 		void set_cabinet_ra_size(word size) { cabinet_ra_size = size; }
+diff -ur libcabinet-0.30.org/cfreader.cpp libcabinet-0.30/cfreader.cpp
+--- libcabinet-0.30.org/cfreader.cpp	1999-10-24 08:13:29.000000000 +0200
++++ libcabinet-0.30/cfreader.cpp	2009-07-24 15:39:28.886876450 +0200
+@@ -22,7 +22,7 @@
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <fstream.h>
++#include <fstream>
+ #include "darray.h"
+ #include "cffile.h"
+ #include "cftypes.h"
+@@ -39,7 +39,7 @@
+ 	word pos = 0u;
+ 
+ 	//close();								// Close if open
+-	cabfile.open(fname, ios::in | ios::binary);	// Open filestream
++	cabfile.open(fname, std::ios::in | std::ios::binary);	// Open filestream
+ 
+ 	if(!cabfile) { return UNABLE_TO_OPEN; }		// Check for open error
+ 	if((err = cabinet_header::read(cabfile)) != OK) { return err; }// Read head
+@@ -92,7 +92,7 @@
+ 
+ int cabinet_reader::extract(cabinet_file_header& file)
+ {
+-	ofstream out;
++	std::ofstream out;
+ 	int err = OK;
+ 	char* dir = NULL;
+ 	char* filename = NULL;
+@@ -126,7 +126,7 @@
+ 		return err;
+ 	}
+ 
+-	out.open(filename, ios::out | ios::binary | ios::trunc);
++	out.open(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+ 
+ 	if(!out)
+ 	{
+diff -ur libcabinet-0.30.org/cfreader.h libcabinet-0.30/cfreader.h
+--- libcabinet-0.30.org/cfreader.h	1999-10-24 08:13:29.000000000 +0200
++++ libcabinet-0.30/cfreader.h	2009-07-24 15:38:03.146876438 +0200
+@@ -11,7 +11,7 @@
+ #ifndef __CFREADER_H__
+ #define __CFREADER_H__
+ 
+-#include <fstream.h>
++#include <fstream>
+ #include "darray.h"
+ #include "cffile.h"
+ #include "cffdrmgr.h"
+@@ -31,7 +31,7 @@
+ 	protected:
+ 		dynamic_array<cabinet_folder_manager> folder_array;
+ 		dynamic_array<cabinet_file_header> file_array;
+-		ifstream cabfile;
++		std::ifstream cabfile;
+ 	public:
+ 		cabinet_reader() {}
+ 		~cabinet_reader() {}
+diff -ur libcabinet-0.30.org/cftypes.cpp libcabinet-0.30/cftypes.cpp
+--- libcabinet-0.30.org/cftypes.cpp	2009-07-24 15:41:19.277901711 +0200
++++ libcabinet-0.30/cftypes.cpp	2009-07-24 15:39:28.890874512 +0200
+@@ -11,7 +11,7 @@
+ #define __CFTYPES_CPP__
+ 
+ #include <values.h>
+-#include <fstream.h>
++#include <fstream>
+ #include "zlib.h"
+ #include "cftypes.h"
+ 
+@@ -136,7 +136,7 @@
+ /******************************************************************************/
+ //*****************************************************************************/
+ 
+-int io_read(istream& in, byte* buf, word len)
++int io_read(std::istream& in, byte* buf, word len)
+ {
+ 	while(len > MAXINT)
+ 	{
+@@ -152,7 +152,7 @@
+ 
+ //*****************************************************************************/
+ 
+-int io_write(ostream& out, const byte* buf, word len)
++int io_write(std::ostream& out, const byte* buf, word len)
+ {
+ 	while(len > MAXINT)
+ 	{
+diff -ur libcabinet-0.30.org/cftypes.h libcabinet-0.30/cftypes.h
+--- libcabinet-0.30.org/cftypes.h	2009-07-24 15:41:19.273903021 +0200
++++ libcabinet-0.30/cftypes.h	2009-07-24 15:38:03.146876438 +0200
+@@ -16,8 +16,8 @@
+ #ifndef __CFTYPES_H__
+ #define __CFTYPES_H__
+ 
+-#include <fstream.h>
+-#include <iostream.h>
++#include <fstream>
++#include <iostream>
+ 
+ typedef unsigned char byte;
+ typedef unsigned short int word;
+@@ -89,7 +89,7 @@
+ 
+ int convert_z_error_code(int code);
+ const char* get_cabinet_error_string(int err);
+-int io_read(istream& in, byte* buf, word len);
+-int io_write(ostream& out, const byte* buf, word len);
++int io_read(std::istream& in, byte* buf, word len);
++int io_write(std::ostream& out, const byte* buf, word len);
+ 
+ #endif
+diff -ur libcabinet-0.30.org/listcab.cpp libcabinet-0.30/listcab.cpp
+--- libcabinet-0.30.org/listcab.cpp	2009-07-24 15:41:16.770876489 +0200
++++ libcabinet-0.30/listcab.cpp	2009-07-24 15:39:56.154992475 +0200
+@@ -8,8 +8,8 @@
+ #include <stdio.h>
+ #include <string.h>
+ //#include <iomanip.h>
+-#include <fstream.h>
+-#include <iostream.h>
++#include <fstream>
++#include <iostream>
+ #include "cftypes.h"
+ #include "cfheader.h"
+ #include "cffolder.h"
+@@ -24,8 +24,8 @@
+ void display_header_info(cabinet_header& cfh);
+ void display_folder_info(cabinet_folder_header& folder, word foldernumber);
+ void display_file_info(cabinet_file_header& file, word filenumber);
+-//void ListFilesWithInfo(CabinetFile& cf, ostream& out);
+-void print_file_info(cabinet_file_header& file, ostream& out);
++//void ListFilesWithInfo(CabinetFile& cf, std::ostream ostream& out);
++void print_file_info(cabinet_file_header& file, std::ostream& out);
+ 
+ ////////////////////////////////////////****************************************
+ 
+@@ -39,17 +39,17 @@
+ 
+ 		if((retval = cab.open()) != OK)
+ 		{
+-			cerr << "Open Error: " << retval << endl;
++			std::cerr << "Open Error: " << retval << std::endl;
+ 			return 1;
+ 		}
+ 		if((retval = cab.new_folder(cfc_folderinfo::MSZIP_COMPRESSION)) != OK)
+ 		{
+-			cerr << "New Folder Error: " << retval << endl;
++			std::cerr << "New Folder Error: " << retval << std::endl;
+ 			return 1;
+ 		}
+ 
+ 		do{
+-			cout << "Enter filename: ";
++			std::cout << "Enter filename: ";
+ 			gets(filename);
+ 
+ 			if(strlen(filename) > 0)
+@@ -57,19 +57,19 @@
+ 				if((retval = cab.add_file(filename)) != OK)
+ 				{
+ 					perror("read");
+-					cerr << "Add file Error: " << retval << endl;
+-					cerr << "Unable to open: " << filename << endl;
++					std::cerr << "Add file Error: " << retval << std::endl;
++					std::cerr << "Unable to open: " << filename << std::endl;
+ 					return 1;
+ 				}
+ 			}
+ 		}while(strlen(filename) > 0);
+ 
+-		cout << "Enter filename for cabinet: ";
++		std::cout << "Enter filename for cabinet: ";
+ 		gets(filename);
+ 
+ 		if((retval = cab.close(filename)) != OK)
+ 		{
+-			cerr << "Close Error: " << retval << endl;
++			std::cerr << "Close Error: " << retval << std::endl;
+ 			return 1;
+ 		}
+ 
+@@ -79,38 +79,38 @@
+ 		int err = 0;
+ 		word pos = 0u;
+ 		cabinet_reader cr;
+-		cout << "Using new codebase..." << endl;
++		std::cout << "Using new codebase..." << std::endl;
+ 
+ 		if((err = cr.open(argv[1])) != OK)
+ 		{
+-			cerr << "Unable to open cabinet file: " << argv[1] << ": " << err << endl;
++			std::cerr << "Unable to open cabinet file: " << argv[1] << ": " << err << std::endl;
+ 			return 1;
+ 		}
+ 
+ 		display_header_info(cr);
+ 
+-		cout << "Number of files within archive: " << cr.get_nfiles() << endl;
++		std::cout << "Number of files within archive: " << cr.get_nfiles() << std::endl;
+ 		char line[81];
+ 		sprintf(line, "%-31s%-15s%-15s%-9s%-10s", "Name", "Size", "Date", "Time", "Attributes");
+-		cout << line << endl;
++		std::cout << line << std::endl;
+ 		memset(line, '-', 80);
+ 		line[80] = '\0';
+-		cout << line << endl;
++		std::cout << line << std::endl;
+ 
+ 		for(pos = 0u; pos < cr.get_nfiles(); pos++)
+ 		{
+-			//cout << "File " << pos << ": " << cr.file(pos).get_name() << endl;
+-			print_file_info(cr.file(pos), cout);
+-			cout << endl;
++			//std::cout << "File " << pos << ": " << cr.file(pos).get_name() << std::endl;
++			print_file_info(cr.file(pos), std::cout);
++			std::cout << std::endl;
+ 		}
+ 
+ 		for(int index = 2; index < argc; index++)
+ 		{
+ 			if((err = cr.extract(argv[index])) != OK)
+ 			{
+-				cerr << "Failed to extract: " << argv[index] << endl
++				std::cerr << "Failed to extract: " << argv[index] << std::endl
+ 					<< "Reason for failure: "
+-					<< get_cabinet_error_string(err) << endl;
++					<< get_cabinet_error_string(err) << std::endl;
+ 				return 1;
+ 			}
+ 		}
+@@ -118,14 +118,14 @@
+ 		cr.close();
+ 		return 0;
+ 
+-	//cerr << "Invalid syntax." << endl;
++	//std::cerr << "Invalid syntax." << std::endl;
+ /*
+ 	char fname[256];
+ 	CabinetFile cf(argv[1]);
+ 
+ 	if(cf.ErrorCode() != OK)
+ 	{
+-		cout << "Error encountered while opening cabinet file: " << cf.error_string() << endl;
++		std::cout << "Error encountered while opening cabinet file: " << cf.error_string() << std::endl;
+ 		return -1;
+ 	}
+ 
+@@ -141,27 +141,27 @@
+ 		DisplayFileInfo(cf.File(cell), cell);
+ 	}
+ 
+-	ListFilesWithInfo(cf, cout);
++	ListFilesWithInfo(cf, std::cout);
+ 
+ 
+-	cout << "Enter file to extract: ";
++	std::cout << "Enter file to extract: ";
+ 	cin >> fname;
+-//	ofstream out(fname, ios::out | ios::binary);
++//	ofstream out(fname, std::ios::out | std::ios::binary);
+ 
+ 	switch(cf.Extract(fname))
+ 	{
+ 		case OK:
+-			cout << fname << ": extracted." << endl;
++			std::cout << fname << ": extracted." << std::endl;
+ 			//out.close();
+ 			break;
+ 		case 0:
+-			cerr << fname << ": not in archive." << endl;
++			std::cerr << fname << ": not in archive." << std::endl;
+ 			out.close();
+ 			unlink(fname);
+ 			break;
+ 		default:
+-			cerr << fname << ": extraction encountered an error: "
+-				<< cf.error_string() << endl;
++			std::cerr << fname << ": extraction encountered an error: "
++				<< cf.error_string() << std::endl;
+ 			//out.close();
+ 			//unlink(fname);
+ 			break;
+@@ -175,39 +175,39 @@
+ 
+ void display_header_info(cabinet_header& cfh)
+ {
+-	cout << "This cabinet file is " << ((cfh.valid_header()) ? "" : "not ")
+-		<< "valid." << endl
+-		<< "This cabinet file is: " << cfh.get_size() << " bytes." << endl
++	std::cout << "This cabinet file is " << ((cfh.valid_header()) ? "" : "not ")
++		<< "valid." << std::endl
++		<< "This cabinet file is: " << cfh.get_size() << " bytes." << std::endl
+ 		<< "This cabinet file's version is: "
+ 		<< (unsigned) cfh.get_version_major()
+-		<< '.' << (unsigned) cfh.get_version_minor() << endl
++		<< '.' << (unsigned) cfh.get_version_minor() << std::endl
+ 		<< "This cabinet file has " << cfh.get_nfolders() << " folders."
+-		<< endl
++		<< std::endl
+ 		<< "This cabinet file has " << cfh.get_nfiles() << " files."
+-		<< endl
++		<< std::endl
+ 		<< "This cabinet is " << ((cfh.is_first()) ? "" : "not ")
+-		<< "the first cabinet in this series." << endl
++		<< "the first cabinet in this series." << std::endl
+ 		<< "This cabinet is " << ((cfh.is_last()) ? "" : "not ")
+-		<< "the last cabinet in this series." << endl
++		<< "the last cabinet in this series." << std::endl
+ 		<< "This cabinet does " << ((cfh.has_reserved_area()) ? "" : "not ")
+-		<< "has reserved fields." << endl;
++		<< "has reserved fields." << std::endl;
+ 
+ 	if(cfh.has_reserved_area())
+ 	{
+-		cout << "The reserved information is: " << cfh.get_reserved_area()
+-			<< endl;
++		std::cout << "The reserved information is: " << cfh.get_reserved_area()
++			<< std::endl;
+ 	}
+ 
+ 	if(cfh.has_prev())
+ 	{
+-		cout << "The previous cabinet is: " << cfh.get_prev_cabinet() << endl;
+-		cout << "The previous disk is: " << cfh.get_prev_disk() << endl;
++		std::cout << "The previous cabinet is: " << cfh.get_prev_cabinet() << std::endl;
++		std::cout << "The previous disk is: " << cfh.get_prev_disk() << std::endl;
+ 	}
+ 
+ 	if(cfh.has_next())
+ 	{
+-		cout << "The next cabinet is: " << cfh.get_next_cabinet() << endl;
+-		cout << "The next disk is: " << cfh.get_next_disk() << endl;
++		std::cout << "The next cabinet is: " << cfh.get_next_cabinet() << std::endl;
++		std::cout << "The next disk is: " << cfh.get_next_disk() << std::endl;
+ 	}
+ }
+ 
+@@ -219,46 +219,46 @@
+ 
+ 	sprintf(buf, "%x", folder.get_compression_type());
+ 
+-	cout << "Folder " << foldernumber << ':' << endl
+-		<< "\tnumber of data blocks: " << folder.get_ndatablocks() << endl
+-		<< "\tcompression type: " << buf << endl
++	std::cout << "Folder " << foldernumber << ':' << std::endl
++		<< "\tnumber of data blocks: " << folder.get_ndatablocks() << std::endl
++		<< "\tcompression type: " << buf << std::endl
+ 		<< "\thas reserved field: "
+-		<< ((folder.has_reserved_area()) ? "Yes" : "No") << endl;
++		<< ((folder.has_reserved_area()) ? "Yes" : "No") << std::endl;
+ }
+ 
+ /****************************************************************************/
+ 
+ void display_file_info(cabinet_file_header& file, word filenumber)
+ {
+-	cout << "File " << filenumber << ':' << endl
+-		<< "\tname: " << file.get_name() << endl
+-		<< "\tsize: " << file.get_size() << endl
+-		<< "\tin folder: " << file.get_folder() << endl
++	std::cout << "File " << filenumber << ':' << std::endl
++		<< "\tname: " << file.get_name() << std::endl
++		<< "\tsize: " << file.get_size() << std::endl
++		<< "\tin folder: " << file.get_folder() << std::endl
+ 		<< "\tdate: " << file.month() << '-'
+ 				    << file.day() << '-'
+-				    << file.year() << endl
++				    << file.year() << std::endl
+ 		<< "\ttime: " << file.hour() << ':'
+ 				    << file.minute() << ':'
+-				    << file.second() << endl
++				    << file.second() << std::endl
+ 		<< "\tContinued From Previous Cabinet: "
+-			<< ((file.continued_from_prev()) ? "Yes" : "No") << endl
++			<< ((file.continued_from_prev()) ? "Yes" : "No") << std::endl
+ 		<< "\tContinued In Next Cabinet: "
+-			<< ((file.continues_in_next()) ? "Yes" : "No") << endl
++			<< ((file.continues_in_next()) ? "Yes" : "No") << std::endl
+ 		<< "\tContinued From Previous Cabinet and In Next Cabinet: "
+ 			<< ((file.continued_from_prev_and_in_next()) ? "Yes" : "No")
+-		<< endl << "\tattributes: ";
+-	if(file.is_readonly()) cout << 'R';
+-	if(file.is_hidden()) cout << 'H';
+-	if(file.is_system()) cout << 'S';
+-	if(file.is_archive()) cout << 'A';
+-	if(file.must_execute()) cout << 'E';
+-	if(file.name_is_utf()) cout << 'U';
+-	cout << endl;
++		<< std::endl << "\tattributes: ";
++	if(file.is_readonly()) std::cout << 'R';
++	if(file.is_hidden()) std::cout << 'H';
++	if(file.is_system()) std::cout << 'S';
++	if(file.is_archive()) std::cout << 'A';
++	if(file.must_execute()) std::cout << 'E';
++	if(file.name_is_utf()) std::cout << 'U';
++	std::cout << std::endl;
+ }
+ 
+ /****************************************************************************/
+ 
+-void print_file_info(cabinet_file_header& file, ostream& out)
++void print_file_info(cabinet_file_header& file, std::ostream& out)
+ {
+ 	char line[81];
+ 
+

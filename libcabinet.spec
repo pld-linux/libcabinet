@@ -2,7 +2,7 @@ Summary:	Cabinet File Library and Utilities
 Summary(pl.UTF-8):	Biblioteka i narzędzia do obsługi plików Cabinet
 Name:		libcabinet
 Version:	0.30
-Release:	3
+Release:	4
 License:	non-commercial, see readme.txt
 Group:		Libraries
 Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{version}.tar.gz
@@ -10,6 +10,7 @@ Source0:	http://Trill.cis.fordham.edu/~barbacha/cabinet_library/%{name}-%{versio
 Source1:	%{name}-Makefile
 Patch0:		%{name}-endl.patch
 Patch1:		%{name}-gcc3.patch
+Patch2:		%{name}-gcc4.patch
 URL:		http://Trill.cis.fordham.edu/~barbacha/cabinet_library/
 # needed with gcc3 patch
 BuildRequires:	libstdc++-devel >= 5:3.2
@@ -51,6 +52,8 @@ Statyczna wersja biblioteki libcabinet.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+
 install -m644 %{SOURCE1} Makefile
 
 %build
